@@ -1,0 +1,640 @@
+<title>Bestandskluis Bouwbrief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDF1F6; --surface:#FFFFFF; --surface-2:#F6F9FC;
+    --ink:#0F1926; --ink-2:#465A70; --ink-3:#7A8BA0;
+    --line:#D5DEE9; --line-2:#B4C2D2;
+    --accent:#1B5CCB; --accent-soft:#E3EDFC; --accent-ink:#134096;
+    --good:#0C7558; --good-soft:#DCF0E9;
+    --warn:#9E4C17; --warn-soft:#FAE8D9;
+    --shadow:0 1px 2px rgba(15,25,38,.06), 0 8px 24px -16px rgba(15,25,38,.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --paper:#0C131C; --surface:#141D28; --surface-2:#1A2531;
+      --ink:#E7EDF5; --ink-2:#A2B2C5; --ink-3:#72849A;
+      --line:#293544; --line-2:#3C4C5E;
+      --accent:#6BA3FF; --accent-soft:#16294480; --accent-ink:#A9CAFF;
+      --good:#48C89D; --good-soft:#0E2F28;
+      --warn:#E09660; --warn-soft:#31210F;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --paper:#0C131C; --surface:#141D28; --surface-2:#1A2531;
+    --ink:#E7EDF5; --ink-2:#A2B2C5; --ink-3:#72849A;
+    --line:#293544; --line-2:#3C4C5E;
+    --accent:#6BA3FF; --accent-soft:#16294480; --accent-ink:#A9CAFF;
+    --good:#48C89D; --good-soft:#0E2F28;
+    --warn:#E09660; --warn-soft:#31210F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    font-size:15px; line-height:1.55;
+    padding-inline:16px; padding-block:0 0;
+  }
+  .wrap{max-width:1240px; margin:0 auto}
+
+  h1,h2,h3,.cond{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;}
+  code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+
+  /* ---------- header ---------- */
+  header{padding-block:40px 28px; border-bottom:2px solid var(--ink); margin-bottom:28px}
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin:0 0 10px;
+  }
+  h1{font-size:clamp(30px,5.2vw,46px); line-height:1.04; margin:0 0 12px; letter-spacing:-.015em; text-wrap:balance}
+  .lede{margin:0; max-width:62ch; color:var(--ink-2); font-size:16px}
+  .lede strong{color:var(--ink); font-weight:600}
+
+  .why{
+    margin-top:22px; display:flex; gap:12px; align-items:flex-start;
+    background:var(--warn-soft); border-left:3px solid var(--warn);
+    padding:14px 16px; border-radius:0 6px 6px 0; max-width:74ch;
+  }
+  .why p{margin:0; font-size:14px; color:var(--ink)}
+  .why .tag{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--warn); font-weight:500; display:block; margin-bottom:3px;
+  }
+
+  /* ---------- layout ---------- */
+  .cols{display:grid; grid-template-columns:minmax(0,1fr) 392px; gap:32px; align-items:start}
+  @media (max-width:1040px){ .cols{grid-template-columns:minmax(0,1fr); gap:28px} }
+
+  /* ---------- groups ---------- */
+  .group{margin-bottom:34px}
+  .ghead{display:flex; align-items:baseline; gap:12px; padding-bottom:8px; border-bottom:1px solid var(--line-2); margin-bottom:18px}
+  .gletter{
+    font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:500;
+    color:var(--surface); background:var(--ink); width:24px; height:24px; flex:0 0 24px;
+    display:grid; place-items:center; border-radius:4px; align-self:center;
+  }
+  .ghead h2{font-size:21px; margin:0; letter-spacing:-.01em}
+  .gsub{margin:0 0 0 auto; font-size:13px; color:var(--ink-3); text-align:right}
+
+  .q{margin-bottom:20px}
+  .qhead{display:flex; gap:9px; align-items:baseline; margin-bottom:9px}
+  .qcode{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); flex:0 0 auto; padding-top:1px}
+  .qtitle{font-weight:600; font-size:15px}
+  .qnote{font-size:13px; color:var(--ink-2); margin:2px 0 9px 30px}
+
+  .opts{display:grid; gap:7px; margin-left:30px}
+  @media (max-width:520px){ .opts,.qnote{margin-left:0} }
+
+  .opt{
+    display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start;
+    background:var(--surface); border:1px solid var(--line); border-radius:7px;
+    padding:11px 13px; cursor:pointer; transition:border-color .12s, background .12s;
+  }
+  .opt:hover{border-color:var(--line-2)}
+  .opt input{margin:3px 0 0; accent-color:var(--accent); width:15px; height:15px; flex:0 0 auto}
+  .opt:has(input:checked){border-color:var(--accent); background:var(--accent-soft)}
+  .opt:has(input:focus-visible){outline:2px solid var(--accent); outline-offset:2px}
+  .ol{font-weight:500; font-size:14.5px; display:flex; flex-wrap:wrap; gap:7px; align-items:center}
+  .od{font-size:13px; color:var(--ink-2); margin-top:2px}
+  .rec{
+    font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--good); background:var(--good-soft); padding:2px 6px; border-radius:3px; font-weight:500;
+  }
+  .flag{
+    font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--warn); background:var(--warn-soft); padding:2px 6px; border-radius:3px; font-weight:500;
+  }
+
+  /* ---------- extra wishes ---------- */
+  .extra{margin-top:8px}
+  .extra label{display:block; font-weight:600; margin-bottom:7px; font-size:15px}
+  textarea{
+    width:100%; min-height:88px; resize:vertical; padding:11px 13px;
+    border:1px solid var(--line); border-radius:7px; background:var(--surface); color:var(--ink);
+    font-family:inherit; font-size:14px; line-height:1.5;
+  }
+  textarea:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+
+  /* ---------- panel ---------- */
+  .panel{position:sticky; top:calc(env(safe-area-inset-top,0px) + 12px)}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); overflow:hidden}
+  .ptop{padding:15px 16px; border-bottom:1px solid var(--line)}
+  .ptop h2{font-size:16px; margin:0 0 10px}
+  .meter{height:5px; background:var(--line); border-radius:99px; overflow:hidden}
+  .bar{height:100%; width:0; background:var(--accent); transition:width .18s ease}
+  .mrow{display:flex; justify-content:space-between; align-items:baseline; margin-top:8px; font-size:12.5px; color:var(--ink-2)}
+  .mrow .n{font-family:"IBM Plex Mono",monospace; color:var(--ink); font-weight:500; font-variant-numeric:tabular-nums}
+
+  .out{
+    margin:0; padding:14px 16px; max-height:44vh; overflow:auto;
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; line-height:1.62;
+    white-space:pre-wrap; word-break:break-word; color:var(--ink); background:var(--surface-2);
+  }
+  @media (max-width:1040px){ .out{max-height:52vh} }
+
+  /* ---------- vaste balk op telefoon ---------- */
+  .mbar{display:none}
+  @media (max-width:1040px){
+    .mbar{
+      display:flex; position:fixed; left:0; right:0; bottom:0; z-index:20;
+      gap:10px; align-items:center;
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+      background:var(--surface); border-top:1px solid var(--line-2);
+      box-shadow:0 -4px 20px -12px rgba(0,0,0,.5);
+    }
+    .mbar .mtrack{flex:1 1 auto; min-width:0}
+    .mbar .mlabel{
+      font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-2);
+      display:block; margin-bottom:5px; font-variant-numeric:tabular-nums;
+    }
+    .mbar .meter{height:4px}
+    .mbar button{flex:0 0 auto; padding:10px 16px}
+    body{padding-bottom:84px}
+    .panel{position:static}
+    header{padding-block:28px 22px}
+  }
+
+  .pact{display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--line); flex-wrap:wrap}
+  button{
+    font-family:inherit; font-size:14px; font-weight:500; border-radius:6px;
+    padding:9px 15px; cursor:pointer; border:1px solid transparent; transition:filter .12s;
+  }
+  button:hover{filter:brightness(1.07)}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .b-primary{background:var(--accent); color:#fff; flex:1 1 auto}
+  .b-ghost{background:var(--surface); color:var(--ink-2); border-color:var(--line-2)}
+
+  footer{
+    margin:44px 0 0; padding:20px 0 36px; border-top:1px solid var(--line);
+    font-size:13px; color:var(--ink-3);
+  }
+  footer p{margin:0 0 6px; max-width:72ch}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Bouwbrief — 40 keuzes</p>
+    <h1>Bestandskluis</h1>
+    <p class="lede">Stel de opdracht samen voor een eigen bestandsopslag op je <strong>Strato VPS</strong>, met je <strong>persoonlijke OneDrive</strong> als bewaarplaats. Kies hieronder; rechts groeit de prompt mee. Alles staat al op de aanbevolen stand, dus je kunt ook meteen kopiëren.</p>
+    <div class="why">
+      <p><span class="tag">Waarom dit ding sneller wordt</span>OneDrive is traag omdat elke mapweergave een netwerkaanvraag is. Bouw je de app zo dat hij óók elke map live bij Microsoft opvraagt, dan krijg je exact dezelfde traagheid terug. De winst zit in <strong>groep C</strong>: een eigen index van alle bestandsnamen op je VPS, plus gecachte previews. Microsoft wordt dan alleen nog gebeld voor de bytes van één bestand dat je echt opent.</p>
+    </div>
+  </header>
+
+  <div class="cols">
+    <div>
+      <form id="form"></form>
+      <div class="extra">
+        <label for="vrij">Eigen aanvullingen</label>
+        <textarea id="vrij" placeholder="Bijvoorbeeld: koppelen aan de maintenance-app, een map die automatisch leegloopt na 30 dagen, of een bestaand domein dat je wilt gebruiken."></textarea>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="card">
+        <div class="ptop">
+          <h2>Jouw prompt</h2>
+          <div class="meter"><div class="bar" id="bar"></div></div>
+          <div class="mrow">
+            <span><span class="n" id="cnt">0</span> van 40 keuzes</span>
+            <span><span class="n" id="words">0</span> woorden</span>
+          </div>
+        </div>
+        <pre class="out" id="out"></pre>
+        <div class="pact">
+          <button type="button" class="b-primary" id="copy">Kopieer prompt</button>
+          <button type="button" class="b-ghost" id="reset">Aanbevolen</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Gemaakt om één keer door te lopen en daarna te kopiëren. De prompt die eruit komt is de opdracht voor de bouw — niet de app zelf.</p>
+    <p>Je keuzes blijven in deze browser bewaard, verder nergens.</p>
+  </footer>
+</div>
+
+<div class="mbar">
+  <div class="mtrack">
+    <span class="mlabel"><span id="cnt2">0</span>/40 gekozen</span>
+    <div class="meter"><div class="bar" id="bar2"></div></div>
+  </div>
+  <button type="button" class="b-primary" id="copy2">Kopieer</button>
+</div>
+
+<script>
+const G = [
+ {l:"A", t:"Fundament", s:"Op je Strato VPS, naast Jake.Lift", q:[
+  {id:"A1", t:"Backend", o:[
+   {l:"Node.js met Fastify", d:"Klein en snel, dezelfde taal als de frontend.", r:1, p:"Node.js met Fastify"},
+   {l:"Node.js met Express", d:"Bekender en meer voorbeelden online, iets trager.", p:"Node.js met Express"},
+   {l:"Python met FastAPI", d:"Prettig als je later OCR of beeldbewerking wilt toevoegen.", p:"Python met FastAPI"},
+   {l:"Go", d:"Zuinigst met geheugen, maar minder snel aan te passen.", p:"Go"}]},
+  {id:"A2", t:"Frontend", o:[
+   {l:"Gewoon JavaScript met Vite", d:"Geen framework-gewicht; laadt het snelst. Genoeg voor deze app.", r:1, p:"gewoon JavaScript met Vite, geen framework"},
+   {l:"React", d:"Meest gebruikt, veel kant-en-klare componenten.", p:"React"},
+   {l:"Svelte", d:"Compacte code, kleine bundel.", p:"Svelte"},
+   {l:"Vue", d:"Middenweg tussen de twee hierboven.", p:"Vue"}]},
+  {id:"A3", t:"Database voor de index", n:"Hier komen bestandsnamen, mappen en datums in — niet de bestanden zelf.", o:[
+   {l:"SQLite", d:"Eén bestand op de VPS, geen losse server. Ruim snel genoeg voor honderdduizenden bestanden.", r:1, p:"SQLite"},
+   {l:"PostgreSQL", d:"Als je later zoeken op documentinhoud wilt of meerdere apps wilt koppelen.", p:"PostgreSQL"},
+   {l:"MySQL of MariaDB", d:"Logisch als er al een MySQL op je VPS draait.", p:"MySQL/MariaDB"}]},
+  {id:"A4", t:"Webserver en certificaat", o:[
+   {l:"Caddy", d:"Regelt Let's Encrypt vanzelf, configuratie van een paar regels.", r:1, p:"Caddy als reverse proxy, HTTPS automatisch via Let's Encrypt"},
+   {l:"Nginx met Certbot", d:"Meer controle. Voor de hand liggend als Jake.Lift al op Nginx draait.", p:"Nginx met Certbot"},
+   {l:"Traefik", d:"Handig wanneer alles in Docker draait.", p:"Traefik"}]},
+  {id:"A5", t:"Uitrol op de VPS", o:[
+   {l:"Docker Compose", d:"Draait naast je bestaande apps zonder ze te raken.", r:1, p:"Docker Compose, geïsoleerd naast de bestaande apps"},
+   {l:"systemd-service", d:"Lichter, geen Docker nodig.", p:"een systemd-service"},
+   {l:"PM2", d:"Als je dat al voor Jake.Lift gebruikt.", p:"PM2"}]}]},
+
+ {l:"B", t:"Opslag en OneDrive", s:"Waar de bestanden werkelijk staan", q:[
+  {id:"B1", t:"Bewaarplaats", o:[
+   {l:"OneDrive is de enige bewaarplaats", d:"De VPS houdt alleen index en cache. Je bestanden blijven gewoon in OneDrive staan en zijn daar ook zonder deze app bereikbaar.", r:1, p:"OneDrive is de enige bewaarplaats; de VPS houdt uitsluitend index en cache"},
+   {l:"VPS-schijf, met OneDrive als back-up", d:"Het snelst, maar de schijf van je VPS is dan de grens.", p:"de VPS-schijf is de bewaarplaats, OneDrive dient als back-up"},
+   {l:"Hybride: recent op de VPS, rest in OneDrive", d:"Voelt het snelst, kost het meeste bouwwerk.", p:"hybride: recente bestanden op de VPS, de rest in OneDrive"}]},
+  {id:"B2", t:"Koppeling met OneDrive", n:"Hiervoor registreer je eenmalig een app in Microsoft Entra ID (het vroegere Azure AD).", o:[
+   {l:"Microsoft Graph, één vaste koppeling", d:"Eén keer koppelen met een refresh token, daarna draait het zonder dat jij opnieuw hoeft in te loggen.", r:1, p:"Microsoft Graph API met een app-registratie in Entra ID en een opgeslagen refresh token"},
+   {l:"Microsoft Graph, per gebruiker inloggen", d:"Iedere gebruiker koppelt zijn eigen OneDrive.", p:"Microsoft Graph waarbij elke gebruiker zijn eigen OneDrive koppelt"},
+   {l:"rclone als tussenlaag", d:"Minder eigen code, maar minder grip op snelheid.", p:"rclone als tussenlaag naar OneDrive"}]},
+  {id:"B3", t:"Route van een upload", o:[
+   {l:"Rechtstreeks van browser naar OneDrive", d:"Via een upload-sessie. De bandbreedte van je VPS wordt niet belast en grote bestanden gaan het snelst.", r:1, p:"uploads gaan rechtstreeks van de browser naar OneDrive via een upload-sessie; de VPS geeft alleen de sessie-URL af"},
+   {l:"Alles via de VPS", d:"Eenvoudiger af te schermen, maar alles gaat door je VPS heen.", p:"uploads lopen via de VPS"},
+   {l:"Klein via de VPS, groot rechtstreeks", d:"Het beste van beide, iets meer code.", p:"kleine bestanden via de VPS, grote rechtstreeks naar OneDrive"}]},
+  {id:"B4", t:"Mapindeling in OneDrive", o:[
+   {l:"Eén app-map met Werk en Prive erin", d:"Blijft in OneDrive zelf ook overzichtelijk.", r:1, p:"één app-map in OneDrive met daarin de submappen Werk en Prive"},
+   {l:"Twee losse mappen in de hoofdmap", d:"Direct zichtbaar tussen je andere mappen.", p:"twee losse mappen in de hoofdmap van OneDrive"},
+   {l:"Afgeschermde app-map", d:"Netjes apart, maar lastiger los van de app te gebruiken.", p:"de afgeschermde App Folder van OneDrive"}]},
+  {id:"B5", t:"Als OneDrive even onbereikbaar is", o:[
+   {l:"Uploads in de wachtrij, bladeren blijft werken", d:"De index staat lokaal, dus je ziet gewoon wat er is.", r:1, p:"bij storing blijft bladeren werken vanuit de index en gaan uploads in een wachtrij die later automatisch doorloopt"},
+   {l:"Melding tonen en blokkeren", d:"Eerlijk en simpel.", p:"bij storing een melding tonen en acties blokkeren"},
+   {l:"Tijdelijk op de VPS zetten", d:"Wordt later doorgezet naar OneDrive.", p:"bij storing tijdelijk op de VPS opslaan en later doorzetten"}]}]},
+
+ {l:"C", t:"Snelheid", s:"De reden dat je dit bouwt", q:[
+  {id:"C1", t:"Waar komt een mapweergave vandaan", n:"De belangrijkste keuze van het hele document.", o:[
+   {l:"Altijd uit de eigen index", d:"Een map opent in milliseconden, ook met duizenden bestanden. Dit is wat de app sneller maakt dan OneDrive.", r:1, p:"mapweergaven komen altijd uit de eigen index in de database, nooit live uit de Graph API"},
+   {l:"Index tonen, op de achtergrond controleren", d:"Direct zichtbaar en corrigeert zichzelf stilletjes.", p:"mapweergaven komen uit de index en worden op de achtergrond geverifieerd tegen OneDrive"},
+   {l:"Live bij Microsoft opvragen", d:"Het simpelst te bouwen — maar dan wordt de app net zo traag als OneDrive nu is.", w:1, p:"mapweergaven worden live uit de Graph API gehaald"}]},
+  {id:"C2", t:"Index bijwerken", o:[
+   {l:"Delta-query, elke paar minuten", d:"Vraagt alleen op wat er veranderd is. Zuinig en betrouwbaar.", r:1, p:"de index wordt bijgewerkt met een Graph delta-query op een vaste interval van enkele minuten"},
+   {l:"Meldingen vanuit Microsoft", d:"Bijna direct, maar je VPS moet van buitenaf bereikbaar zijn.", p:"de index wordt bijgewerkt via Graph-webhooks"},
+   {l:"Alleen als jij ververst", d:"Minste werk, maar je ziet wijzigingen van elders pas later.", p:"de index wordt alleen bijgewerkt op verzoek van de gebruiker"}]},
+  {id:"C3", t:"Miniaturen en previews", o:[
+   {l:"Zelf maken op de VPS en bewaren", d:"Eén keer werk per bestand, daarna staat een map meteen vol previews.", r:1, p:"miniaturen worden op de VPS gegenereerd en gecached op schijf"},
+   {l:"Die van Microsoft gebruiken", d:"Geen rekenwerk, wel een netwerkaanvraag per plaatje.", p:"miniaturen worden bij de Graph API opgehaald"},
+   {l:"Geen previews, alleen iconen", d:"Het snelst, maar visueel karig voor foto's.", p:"geen miniaturen, alleen bestandstype-iconen"}]},
+  {id:"C4", t:"Bestanden cachen op de VPS", o:[
+   {l:"Recent geopende bestanden, met een limiet", d:"Bijvoorbeeld 5 GB, oudste vervalt vanzelf.", r:1, p:"recent geopende bestanden worden op de VPS gecached met een instelbare maximale omvang"},
+   {l:"Niets cachen", d:"Elke keer vers bij OneDrive ophalen.", p:"geen bestandscache op de VPS"},
+   {l:"Alles cachen wat past", d:"Snelst, maar vult je schijf.", p:"alle bestanden worden gecached zolang er schijfruimte is"}]},
+  {id:"C5", t:"Laadgedrag in de interface", o:[
+   {l:"Virtueel scrollen, volgende map vooruit laden", d:"Een map met 10.000 bestanden blijft vloeiend.", r:1, p:"virtueel scrollen bij lange lijsten en de waarschijnlijk volgende map vast vooruit laden"},
+   {l:"Paginering", d:"Voorspelbaar, iets meer klikken.", p:"paginering bij lange lijsten"},
+   {l:"Alles in één keer", d:"Prima bij kleine mappen, stroperig bij grote.", p:"volledige lijsten in één keer laden"}]}]},
+
+ {l:"D", t:"Inloggen", s:"Wie mag erbij", q:[
+  {id:"D1", t:"Inlogmethode", o:[
+   {l:"E-mailadres en wachtwoord", d:"Wachtwoorden opgeslagen met Argon2. Werkt altijd, ook zonder Microsoft.", r:1, p:"inloggen met e-mailadres en wachtwoord, opgeslagen met Argon2"},
+   {l:"Inloggen met Microsoft", d:"Geen apart wachtwoord, wel afhankelijk van Microsoft.", p:"inloggen via Microsoft"},
+   {l:"Link per e-mail", d:"Geen wachtwoord te onthouden, wel je mailbox nodig.", p:"inloggen via een eenmalige link per e-mail"},
+   {l:"Passkey", d:"Vingerafdruk of gezicht. Modern, iets meer bouwwerk.", p:"inloggen met passkeys"}]},
+  {id:"D2", t:"Sessiebeheer", o:[
+   {l:"Sessie op de server, cookie in de browser", d:"Uitloggen werkt direct, ook op afstand.", r:1, p:"server-side sessies met een httpOnly-cookie"},
+   {l:"JWT-token", d:"Geen sessieopslag nodig, maar intrekken is lastiger.", p:"JWT-tokens"}]},
+  {id:"D3", t:"Gebruikers", o:[
+   {l:"Alleen jij", d:"Eén account. Later uit te breiden.", r:1, p:"één gebruiker (alleen de eigenaar), met ruimte om later uit te breiden"},
+   {l:"Een paar vaste mensen", d:"Ieder een eigen ruimte, jij maakt de accounts aan.", p:"meerdere vaste gebruikers met een eigen ruimte, aangemaakt door de beheerder"},
+   {l:"Gebruikers met rollen", d:"Beheerder, bewerker, lezer.", p:"meerdere gebruikers met de rollen beheerder, bewerker en lezer"}]},
+  {id:"D4", t:"Tweestapsverificatie", o:[
+   {l:"Met authenticator-app, zelf aan te zetten", d:"Standaard uit, met één knop aan.", r:1, p:"optionele tweestapsverificatie met TOTP"},
+   {l:"Verplicht voor iedereen", d:"Veiligst, iets omslachtiger.", p:"verplichte tweestapsverificatie met TOTP"},
+   {l:"Niet nodig", d:"Alleen verstandig bij een sterk wachtwoord.", p:"geen tweestapsverificatie"}]},
+  {id:"D5", t:"Misbruik tegenhouden", o:[
+   {l:"Snelheidslimiet, tijdelijke blokkade, logboek", d:"Houdt geautomatiseerd raden tegen.", r:1, p:"rate limiting, tijdelijke blokkade na mislukte pogingen en een logboek van inlogpogingen"},
+   {l:"Alleen een snelheidslimiet", d:"Het minimum.", p:"alleen rate limiting"},
+   {l:"Alleen bereikbaar via VPN of vaste IP-adressen", d:"Zeer veilig, maar onderweg lastig.", p:"toegang beperkt tot een VPN of een lijst toegestane IP-adressen"}]}]},
+
+ {l:"E", t:"Werk en privé", s:"Twee werelden, één app", q:[
+  {id:"E1", t:"Hoe gescheiden", o:[
+   {l:"Twee hoofdmappen in dezelfde OneDrive", d:"Simpel, en ook buiten de app logisch.", r:1, p:"werk en privé zijn twee hoofdmappen binnen dezelfde OneDrive"},
+   {l:"Twee losse OneDrive-accounts", d:"Echt gescheiden, twee koppelingen te onderhouden.", p:"werk en privé zijn twee afzonderlijk gekoppelde OneDrive-accounts"},
+   {l:"Labels in plaats van mappen", d:"Flexibel, maar minder herkenbaar in OneDrive zelf.", p:"werk en privé zijn labels op bestanden in plaats van aparte mappen"}]},
+  {id:"E2", t:"Wisselen tussen de twee", o:[
+   {l:"Schakelaar bovenin, onthoudt je keuze", d:"Eén klik, je begint waar je gebleven was.", r:1, p:"een schakelaar bovenin wisselt tussen werk en privé en onthoudt de laatste keuze"},
+   {l:"Twee losse ingangen", d:"Bijvoorbeeld werk.jouwdomein.nl en prive.jouwdomein.nl.", p:"twee afzonderlijke ingangen op eigen subdomeinen"},
+   {l:"Alles door elkaar met een filter", d:"Eén overzicht, filteren als je wilt.", p:"één gecombineerd overzicht met een filter op werk of privé"}]},
+  {id:"E3", t:"Visueel onderscheid", o:[
+   {l:"Andere accentkleur per ruimte", d:"Je ziet in een oogopslag waar je zit — voorkomt dat je privéfoto's in de werkmap zet.", r:1, p:"elke ruimte heeft een eigen accentkleur zodat direct zichtbaar is waar je bent"},
+   {l:"Alleen een label bovenin", d:"Subtiel.", p:"alleen een tekstlabel geeft de actieve ruimte aan"},
+   {l:"Geen onderscheid", d:"Rustiger beeld, groter risico op vergissingen.", p:"geen visueel onderscheid tussen de ruimtes"}]},
+  {id:"E4", t:"Wie ziet wat", o:[
+   {l:"Privé alleen voor jou, werk deelbaar", d:"Privé kan nooit per ongeluk gedeeld worden.", r:1, p:"de privéruimte is nooit deelbaar, de werkruimte wel"},
+   {l:"Per map in te stellen", d:"Meeste vrijheid, meeste knoppen.", p:"deelbaarheid is per map in te stellen"},
+   {l:"Alles voor iedereen die inlogt", d:"Alleen logisch als je de enige gebruiker bent.", p:"alle ingelogde gebruikers zien alles"}]},
+  {id:"E5", t:"Zoeken over de ruimtes", o:[
+   {l:"Binnen de ruimte waar je bent", d:"Geen werkbestanden tussen je vakantiefoto's.", r:1, p:"zoeken gebeurt standaard binnen de actieve ruimte"},
+   {l:"Altijd over allebei", d:"Vind je alles in één keer.", p:"zoeken gaat altijd over beide ruimtes"},
+   {l:"Je kiest het per zoekopdracht", d:"Een knopje bij de zoekbalk.", p:"per zoekopdracht te kiezen of beide ruimtes worden doorzocht"}]}]},
+
+ {l:"F", t:"Bestanden", s:"Zoals je het van OneDrive gewend bent", q:[
+  {id:"F1", t:"Uploaden vanaf de computer", o:[
+   {l:"Slepen, hele mappen slepen, plakken", d:"Ook een schermafdruk uit je klembord plakken.", r:1, p:"uploaden door bestanden én hele mappen te slepen, plus plakken vanaf het klembord"},
+   {l:"Slepen en een knop", d:"Dekt het meeste.", p:"uploaden door slepen of via een knop"},
+   {l:"Alleen een knop met bestandskiezer", d:"Het eenvoudigst.", p:"uploaden via een bestandskiezer"}]},
+  {id:"F2", t:"Grote bestanden", o:[
+   {l:"In stukken, hervatbaar, meerdere tegelijk", d:"Een video van 4 GB overleeft een haperende verbinding.", r:1, p:"grote bestanden worden in stukken geüpload, zijn hervatbaar na onderbreking en kunnen parallel lopen, met voortgang per bestand"},
+   {l:"In stukken, hervatbaar, één tegelijk", d:"Rustiger voor je verbinding.", p:"grote bestanden in hervatbare stukken, één tegelijk"},
+   {l:"In één keer", d:"Simpel, maar loopt stuk op grote bestanden.", p:"bestanden in één keer uploaden"}]},
+  {id:"F3", t:"Wat je met een bestand kunt", o:[
+   {l:"Hernoemen, verplaatsen, kopiëren, prullenbak", d:"Verwijderd blijft 30 dagen terug te halen.", r:1, p:"hernoemen, verplaatsen, kopiëren en verwijderen naar een prullenbak met herstelmogelijkheid"},
+   {l:"Dat alles plus versiegeschiedenis", d:"Oudere versies van een bestand terughalen.", p:"hernoemen, verplaatsen, kopiëren, prullenbak én versiegeschiedenis"},
+   {l:"Alleen uploaden en verwijderen", d:"Het kale minimum.", p:"alleen uploaden en verwijderen"}]},
+  {id:"F4", t:"Zoeken", o:[
+   {l:"Op naam en map, direct uit de index", d:"Resultaten terwijl je typt, omdat er geen netwerk aan te pas komt.", r:1, p:"zoeken op bestandsnaam en map, direct uit de lokale index, met resultaten terwijl je typt"},
+   {l:"Ook in de inhoud van documenten", d:"PDF's en Office-bestanden worden doorzoekbaar.", p:"zoeken op naam plus op de tekstinhoud van PDF- en Office-bestanden"},
+   {l:"Ook tekst in foto's herkennen", d:"Een gefotografeerde factuur wordt vindbaar.", p:"zoeken op naam, documentinhoud en via OCR ook tekst in foto's"}]},
+  {id:"F5", t:"Weergave", o:[
+   {l:"Raster met previews en een lijst, omschakelbaar", d:"Raster voor foto's, lijst voor documenten.", r:1, p:"omschakelbare weergave tussen raster met previews en een detaillijst"},
+   {l:"Dat plus een tijdlijn op datum", d:"Fijn om foto's terug te vinden.", p:"raster, lijst én een tijdlijnweergave gesorteerd op datum"},
+   {l:"Alleen een lijst", d:"Compact en snel.", p:"alleen een lijstweergave"}]}]},
+
+ {l:"G", t:"Camera en media", s:"Direct opnemen in de webapp", q:[
+  {id:"G1", t:"Wat je kunt opnemen", o:[
+   {l:"Foto en video", d:"Opname gaat rechtstreeks de gekozen map in.", r:1, p:"in de webapp foto's en video's opnemen die direct in de actieve map belanden"},
+   {l:"Foto, video en spraakmemo", d:"Handig om snel iets in te spreken bij een klus.", p:"foto's, video's en spraakmemo's opnemen in de webapp"},
+   {l:"Alleen foto", d:"Het eenvoudigst.", p:"alleen foto's opnemen in de webapp"}]},
+  {id:"G2", t:"Camera-opties", o:[
+   {l:"Voor- en achtercamera, serieopname, direct uploaden", d:"Meerdere foto's achter elkaar zonder tussenschermen.", r:1, p:"wisselen tussen voor- en achtercamera, meerdere opnamen achter elkaar en direct uploaden"},
+   {l:"Ook resolutie kiezen en een hulpraster", d:"Voor wie het netjes wil hebben.", p:"camerawissel, serieopname, keuze van resolutie en een hulpraster"},
+   {l:"Eén foto, dan uploaden", d:"Zo min mogelijk knoppen.", p:"één foto per keer, daarna uploaden"}]},
+  {id:"G3", t:"Verkleinen voor het uploaden", o:[
+   {l:"Foto's verkleinen naar een instelbare maximale zijde", d:"Scheelt enorm in wachttijd en opslag. Standaard bijvoorbeeld 2560 pixels.", r:1, p:"foto's worden in de browser verkleind naar een instelbare maximale zijde voordat ze worden geüpload"},
+   {l:"Per opname kiezen", d:"Een schakelaar bij de camera.", p:"per opname te kiezen of er verkleind wordt"},
+   {l:"Altijd het origineel bewaren", d:"Hoogste kwaliteit, traagste upload.", p:"foto's worden altijd op originele grootte bewaard"}]},
+  {id:"G4", t:"Locatiegegevens in foto's", o:[
+   {l:"Bewaren in privé, verwijderen bij delen", d:"Je eigen foto's houden hun plaats; wie een link krijgt ziet niet waar je was.", r:1, p:"EXIF-locatiegegevens blijven bewaard in de privéruimte maar worden verwijderd uit gedeelde bestanden"},
+   {l:"Altijd verwijderen", d:"Veiligst.", p:"EXIF-locatiegegevens worden altijd verwijderd"},
+   {l:"Altijd bewaren", d:"Handig voor een kaartweergave later.", p:"EXIF-gegevens blijven altijd bewaard"}]},
+  {id:"G5", t:"Bekijken in de app", o:[
+   {l:"Schermvullend met vegen, videospeler, PDF-weergave", d:"Je hoeft niets te downloaden om iets te bekijken.", r:1, p:"schermvullende weergave met vegen tussen bestanden, een videospeler en PDF-weergave in de app"},
+   {l:"Dat plus zoomen en draaien", d:"Fijn bij gefotografeerde documenten.", p:"schermvullende weergave met vegen, zoomen, draaien, videospeler en PDF-weergave"},
+   {l:"Alleen downloaden", d:"Minste bouwwerk.", p:"bestanden kunnen alleen worden gedownload"}]}]},
+
+ {l:"H", t:"Delen en afwerking", s:"Naar buiten toe", q:[
+  {id:"H1", t:"Soort deellink", o:[
+   {l:"Link met vervaldatum", d:"Standaard bijvoorbeeld 14 dagen; daarna vanzelf dood.", r:1, p:"deellinks met een instelbare vervaldatum"},
+   {l:"Link met wachtwoord", d:"Extra drempel voor de ontvanger.", p:"deellinks beveiligd met een wachtwoord"},
+   {l:"Link die één keer werkt", d:"Na openen direct ongeldig.", p:"deellinks die na één keer openen vervallen"},
+   {l:"Openbare link zonder einddatum", d:"Makkelijkst, blijft eeuwig geldig.", p:"openbare deellinks zonder vervaldatum"}]},
+  {id:"H2", t:"Wat de ontvanger mag", o:[
+   {l:"Bekijken en downloaden", d:"Wat je meestal wilt.", r:1, p:"ontvangers van een link mogen bekijken en downloaden"},
+   {l:"Alleen bekijken", d:"Geen downloadknop.", p:"ontvangers mogen alleen bekijken"},
+   {l:"Ook uploaden", d:"Een inlevermap: anderen zetten er bestanden in zonder account.", p:"ontvangers mogen ook bestanden uploaden in een inlevermap"}]},
+  {id:"H3", t:"Overzicht van je links", o:[
+   {l:"Lijst met openingen, per stuk in te trekken", d:"Je ziet wanneer iemand iets opende en zet een link met één klik uit.", r:1, p:"een overzicht van actieve deellinks met aantal openingen en laatste datum, per link in te trekken"},
+   {l:"Alleen een lijst", d:"Zonder statistiek.", p:"een eenvoudige lijst van actieve deellinks"},
+   {l:"Geen overzicht", d:"Delen en vergeten.", p:"geen overzicht van deellinks"}]},
+  {id:"H4", t:"Extra's", n:"Meerdere tegelijk mogelijk.", m:1, o:[
+   {l:"Favorieten", d:"Sterretje bij wat je vaak nodig hebt.", r:1, p:"favorieten"},
+   {l:"Recent geopend", d:"Je laatste bestanden op de startpagina.", r:1, p:"een lijst recent geopende bestanden"},
+   {l:"QR-code bij een deellink", d:"Scannen in plaats van doorsturen.", r:1, p:"een QR-code bij elke deellink"},
+   {l:"Meerdere bestanden als zip downloaden", d:"Een hele map in één keer.", r:1, p:"meerdere bestanden of een hele map als zip downloaden"},
+   {l:"Notitie bij een bestand", d:"Een regel context bij een foto van een klus.", p:"een notitieveld bij elk bestand"},
+   {l:"Dubbele bestanden opsporen", d:"Vindt kopieën op inhoud, niet op naam.", p:"opsporen van dubbele bestanden op basis van hun inhoud"},
+   {l:"Opslagoverzicht", d:"Wat vreet je ruimte op.", p:"een overzicht van het opslaggebruik per map"}]},
+  {id:"H5", t:"Hoe de app aanvoelt", o:[
+   {l:"Installeerbaar, donkere modus, sneltoetsen", d:"Als app op je telefoon en op je bureaublad.", r:1, p:"installeerbaar als PWA, met donkere modus en sneltoetsen"},
+   {l:"Dat plus offline inzien van gecachte bestanden", d:"Onderweg zonder bereik nog bij je laatste bestanden.", p:"installeerbaar als PWA met donkere modus, sneltoetsen en offline inzien van gecachte bestanden"},
+   {l:"Gewoon een website", d:"Geen installatie-gedoe.", p:"een gewone website zonder PWA"}]}]}
+];
+
+const KEY = "kluis-bouwbrief-v1";
+const form = document.getElementById("form");
+const out = document.getElementById("out");
+const bar = document.getElementById("bar");
+const cnt = document.getElementById("cnt");
+const words = document.getElementById("words");
+const vrij = document.getElementById("vrij");
+const bar2 = document.getElementById("bar2");
+const cnt2 = document.getElementById("cnt2");
+
+let state = {};
+
+function defaults(){
+  const s = {};
+  G.forEach(g => g.q.forEach(q => {
+    if (q.m) s[q.id] = q.o.map((o,i) => o.r ? i : -1).filter(i => i >= 0);
+    else { const i = q.o.findIndex(o => o.r); s[q.id] = i < 0 ? 0 : i; }
+  }));
+  return s;
+}
+
+function render(){
+  form.innerHTML = "";
+  G.forEach(g => {
+    const sec = document.createElement("section");
+    sec.className = "group";
+    const head = document.createElement("div");
+    head.className = "ghead";
+    head.innerHTML = '<span class="gletter">' + g.l + '</span><h2>' + g.t + '</h2><p class="gsub">' + g.s + '</p>';
+    sec.appendChild(head);
+
+    g.q.forEach(q => {
+      const box = document.createElement("div");
+      box.className = "q";
+      let html = '<div class="qhead"><span class="qcode">' + q.id + '</span><span class="qtitle">' + q.t + '</span></div>';
+      if (q.n) html += '<p class="qnote">' + q.n + '</p>';
+      html += '<div class="opts">';
+      q.o.forEach((o, i) => {
+        const type = q.m ? "checkbox" : "radio";
+        const id = q.id + "-" + i;
+        const checked = q.m ? state[q.id].includes(i) : state[q.id] === i;
+        html += '<label class="opt" for="' + id + '">'
+          + '<input type="' + type + '" id="' + id + '" name="' + q.id + '" value="' + i + '"' + (checked ? " checked" : "") + '>'
+          + '<span><span class="ol">' + o.l
+          + (o.r ? ' <span class="rec">aanbevolen</span>' : "")
+          + (o.w ? ' <span class="flag">let op</span>' : "")
+          + '</span><span class="od">' + o.d + '</span></span></label>';
+      });
+      html += "</div>";
+      box.innerHTML = html;
+      sec.appendChild(box);
+    });
+    form.appendChild(sec);
+  });
+}
+
+function build(){
+  const pick = (id) => {
+    const q = G.flatMap(g => g.q).find(x => x.id === id);
+    return q.m ? state[id].map(i => q.o[i].p) : q.o[state[id]].p;
+  };
+  const L = [];
+  L.push("# Bouwopdracht: eigen bestandskluis op mijn VPS");
+  L.push("");
+  L.push("## Situatie");
+  L.push("Ik draai een Strato VPS waarop al twee eigen apps draaien (Jake.Lift en een maintenance-app). Deze nieuwe app moet daar uiteindelijk naast komen te staan, zonder de bestaande apps te verstoren.");
+  L.push("Mijn persoonlijke OneDrive is de opslagplek voor de bestanden.");
+  L.push("");
+  L.push("## Waarom");
+  L.push("OneDrive is op mijn computer en in de webversie te traag. Ik wil dezelfde bestanden, maar dan snel bereikbaar, met een duidelijke scheiding tussen werk en privé, en met de mogelijkheid om direct vanaf mijn telefoon foto's en video's toe te voegen.");
+  L.push("");
+
+  const c1 = state["C1"];
+  L.push("## Uitgangspunt voor de snelheid");
+  if (c1 === 2){
+    L.push("LET OP — ik heb gekozen voor live opvragen bij de Graph API. Wijs me erop als dit de app even traag maakt als OneDrive nu is, en stel voor hoe een lokale index dat zou oplossen.");
+  } else {
+    L.push("De app mag een mapweergave nooit laten wachten op Microsoft. Alle bestandsnamen, mappen, groottes en datums staan in een eigen index op de VPS. De Graph API wordt alleen aangesproken voor het bijwerken van die index en voor de bytes van een bestand dat daadwerkelijk geopend of gedownload wordt. Een map met duizenden bestanden moet binnen 200 ms op het scherm staan.");
+  }
+  L.push("");
+
+  const sec = (title, lines) => { L.push("## " + title); lines.forEach(x => L.push("- " + x)); L.push(""); };
+
+  sec("Techniek", [
+    "Backend: " + pick("A1"),
+    "Frontend: " + pick("A2"),
+    "Database voor de index: " + pick("A3"),
+    "Webserver: " + pick("A4"),
+    "Uitrol: " + pick("A5")]);
+
+  sec("Opslag en OneDrive", [
+    "Bewaarplaats: " + pick("B1"),
+    "Koppeling: " + pick("B2"),
+    "Uploads: " + pick("B3"),
+    "Mapindeling: " + pick("B4"),
+    "Bij storing: " + pick("B5")]);
+
+  sec("Snelheid", [
+    "Mapweergave: " + pick("C1"),
+    "Index bijwerken: " + pick("C2"),
+    "Miniaturen: " + pick("C3"),
+    "Bestandscache: " + pick("C4"),
+    "Interface: " + pick("C5")]);
+
+  sec("Inloggen en gebruikers", [
+    "Inloggen: " + pick("D1"),
+    "Sessies: " + pick("D2"),
+    "Gebruikers: " + pick("D3"),
+    "Tweestapsverificatie: " + pick("D4"),
+    "Beveiliging: " + pick("D5")]);
+
+  sec("Werk en privé", [
+    "Scheiding: " + pick("E1"),
+    "Wisselen: " + pick("E2"),
+    "Onderscheid: " + pick("E3"),
+    "Zichtbaarheid: " + pick("E4"),
+    "Zoeken: " + pick("E5")]);
+
+  sec("Bestanden", [
+    "Uploaden: " + pick("F1"),
+    "Grote bestanden: " + pick("F2"),
+    "Bewerkingen: " + pick("F3"),
+    "Zoeken: " + pick("F4"),
+    "Weergave: " + pick("F5")]);
+
+  sec("Camera en media", [
+    "Opnemen: " + pick("G1"),
+    "Camera: " + pick("G2"),
+    "Verkleinen: " + pick("G3"),
+    "Locatiegegevens: " + pick("G4"),
+    "Bekijken: " + pick("G5")]);
+
+  const ex = pick("H4");
+  sec("Delen en afwerking", [
+    "Deellinks: " + pick("H1"),
+    "Rechten: " + pick("H2"),
+    "Beheer: " + pick("H3"),
+    "Extra's: " + (ex.length ? ex.join(", ") : "geen"),
+    "App-gedrag: " + pick("H5")]);
+
+  const v = vrij.value.trim();
+  if (v){ L.push("## Eigen aanvullingen"); L.push(v); L.push(""); }
+
+  L.push("## Bouw in deze volgorde");
+  L.push("1. Koppeling met OneDrive en de index: inloggen bij Microsoft, bestanden inlezen, index vullen en bijhouden. Nog zonder interface.");
+  L.push("2. Inloggen en de scheiding tussen werk en privé.");
+  L.push("3. Bladeren, zoeken en previews — eerst snel maken, dan mooi.");
+  L.push("4. Uploaden vanaf de computer, inclusief grote bestanden.");
+  L.push("5. Camera in de webapp.");
+  L.push("6. Deellinks.");
+  L.push("7. De extra's.");
+  L.push("");
+  L.push("## Randvoorwaarden");
+  L.push("- Lever per stap iets dat draait en te testen is; geen half afgemaakte onderdelen.");
+  L.push("- Geen sleutels of wachtwoorden in de code; alles via omgevingsvariabelen.");
+  L.push("- Schrijf op hoe ik de app op de VPS installeer en bijwerk, en wat ik in Microsoft Entra ID moet instellen.");
+  L.push("- Nederlandse interface.");
+  L.push("- Begin met een plan en de mappenstructuur voordat je code schrijft, en leg keuzes kort uit.");
+
+  return L.join("\n");
+}
+
+function update(){
+  const text = build();
+  out.textContent = text;
+  const total = G.flatMap(g => g.q).length;
+  let done = 0;
+  G.flatMap(g => g.q).forEach(q => { if (q.m ? state[q.id].length : state[q.id] !== undefined) done++; });
+  const pct = (done / total * 100) + "%";
+  cnt.textContent = done; cnt2.textContent = done;
+  bar.style.width = pct; bar2.style.width = pct;
+  words.textContent = text.trim().split(/\s+/).length;
+  try { localStorage.setItem(KEY, JSON.stringify({state: state, vrij: vrij.value})); } catch(e){}
+}
+
+form.addEventListener("change", e => {
+  const name = e.target.name, i = Number(e.target.value);
+  const q = G.flatMap(g => g.q).find(x => x.id === name);
+  if (!q) return;
+  if (q.m){
+    const s = new Set(state[name]);
+    e.target.checked ? s.add(i) : s.delete(i);
+    state[name] = [...s].sort((a,b) => a-b);
+  } else state[name] = i;
+  update();
+});
+
+vrij.addEventListener("input", update);
+
+document.getElementById("reset").addEventListener("click", () => {
+  state = defaults(); vrij.value = ""; render(); update();
+});
+
+function attachCopy(btn, idle){
+  btn.addEventListener("click", () => {
+    const text = out.textContent;
+    const ok = () => { btn.textContent = "Gekopieerd"; setTimeout(() => btn.textContent = idle, 1600); };
+    const fallback = () => {
+      out.scrollIntoView({block:"center", behavior:"smooth"});
+      const r = document.createRange(); r.selectNodeContents(out);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "Selecteer zelf";
+      setTimeout(() => btn.textContent = idle, 2600);
+    };
+    try { navigator.clipboard.writeText(text).then(ok, fallback); }
+    catch(e){ fallback(); }
+  });
+}
+attachCopy(document.getElementById("copy"), "Kopieer prompt");
+attachCopy(document.getElementById("copy2"), "Kopieer");
+
+state = defaults();
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved && saved.state){
+    Object.keys(state).forEach(k => { if (saved.state[k] !== undefined) state[k] = saved.state[k]; });
+    if (saved.vrij) vrij.value = saved.vrij;
+  }
+} catch(e){}
+render();
+update();
+</script>
