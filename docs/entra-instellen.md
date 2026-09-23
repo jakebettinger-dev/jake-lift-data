@@ -39,12 +39,23 @@ omgeving. Dat heeft drie gevolgen:
 
 ## Stap 1 — Aanmelden
 
-Ga naar **[entra.microsoft.com](https://entra.microsoft.com)** en log in met het Microsoft-account
-waar je OneDrive aan hangt. Dus het account met de bestanden, niet een werkaccount.
+Ga naar **[portal.azure.com](https://portal.azure.com)** en log in met het Microsoft-account waar
+je OneDrive aan hangt. Dus het account met de bestanden.
+
+> **Niet naar entra.microsoft.com.** Dat adres accepteert uitsluitend zakelijke accounts. Log je
+> daar in met een outlook.com-adres, dan kom je in een tenant genaamd *Microsoft Services* terecht
+> waar je account niet bestaat, en krijg je de melding *"Geselecteerde gebruikersaccount bestaat
+> niet in tenant..."*. Via portal.azure.com werkt het wel: Azure maakt bij de eerste keer inloggen
+> vanzelf een lege directory voor je persoonlijke account aan. Je hebt hiervoor **geen** Azure-
+> abonnement nodig en er wordt niets in rekening gebracht.
+
+Zit je browser nog ingelogd met een werkaccount, open portal.azure.com dan in een **privévenster**.
+Anders pakt Azure die sessie en krijg je dezelfde foutmelding.
 
 ## Stap 2 — App registreren
 
-In het linkermenu: **Entra ID** → **App registrations** → **New registration**.
+Typ boven in de zoekbalk **App registrations** en open dat. (Het staat ook onder
+*Microsoft Entra ID* → *App registrations*.) Klik dan op **New registration**.
 
 Vul in:
 
@@ -131,6 +142,8 @@ stap 1 van de bouw. Daar hoef je nu niets voor te doen.
 
 | Melding | Wat er aan de hand is |
 |---|---|
+| *"account bestaat niet in tenant Microsoft Services"* (AADSTS50020) | je zit op entra.microsoft.com; ga naar portal.azure.com — zie stap 1 |
+| dezelfde melding op portal.azure.com | je browser gebruikt nog een werkaccount; open een privévenster |
 | *unauthorized_client* of *AADSTS50194* | bij stap 2 het verkeerde accounttype gekozen; opnieuw registreren |
 | geen refresh token terug | `offline_access` vergeten bij stap 6 |
 | *redirect_uri_mismatch* | het adres in stap 4 wijkt af van wat de app gebruikt, tot en met de schuine streep |

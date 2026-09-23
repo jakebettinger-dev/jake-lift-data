@@ -1,0 +1,10 @@
+# gegevens, nooit in git
+data/
+*.db
+*.db-journal
+*.db-wal
+
+# instellingen met echte waarden
+.env
+
+node_modules/

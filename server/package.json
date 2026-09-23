@@ -1,0 +1,15 @@
+{
+  "name": "bestandskluis-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Index en OneDrive-koppeling voor de bestandskluis",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "koppelen": "node --no-warnings src/cli.js koppelen",
+    "sync": "node --no-warnings src/cli.js sync",
+    "status": "node --no-warnings src/cli.js status",
+    "zoek": "node --no-warnings src/cli.js zoek",
+    "test": "node --no-warnings --test test/"
+  }
+}
