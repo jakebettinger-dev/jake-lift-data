@@ -195,17 +195,18 @@ Stap 1 en 2 zijn samen het fundament; daarna wordt elke stap losstaand bruikbaar
 
 ## 7. Wat er van jou nodig is
 
-Voordat stap 1 tegen je echte OneDrive kan draaien:
+Voordat stap 1 tegen je echte OneDrive kan draaien, is er een app-registratie in Microsoft Entra
+nodig. De klikstappen staan in **[docs/entra-instellen.md](docs/entra-instellen.md)**.
 
-1. **App-registratie in Microsoft Entra ID** (portal.azure.com → Microsoft Entra ID → App
-   registrations → New registration). Noteer de *Application (client) ID* en de *Directory
-   (tenant) ID*.
-2. **Een client secret** aanmaken onder Certificates & secrets. Die is maar één keer zichtbaar.
-3. **Rechten toekennen**: `Files.ReadWrite.All` en `offline_access` (delegated).
-4. **Redirect-URI** instellen op het adres waar de app komt te draaien.
-5. **Een domein of subdomein** dat naar je VPS wijst, voor het certificaat.
+Het levert drie waarden op — client ID, client secret en redirect-URI — die in `.env` op de VPS
+komen, nooit in de code en nooit in deze repo.
 
-Die waarden komen in `.env` op de VPS terecht, nooit in de code en nooit in deze repo.
+Daarnaast heb je een domein of subdomein nodig dat naar je VPS wijst, voor het certificaat.
 
-De precieze klikstappen schrijf ik uit in `docs/entra-instellen.md` zodra stap 1 er is, zodat je
-het naast het scherm kunt leggen.
+> **Let op — dit wijkt af van wat hierboven in §2 staat aangenomen.** Jouw OneDrive hangt aan een
+> persoonlijk Microsoft-account. Daarvoor bestaan géén *application permissions*: een app kan niet
+> volledig zelfstandig bij de bestanden. Je logt één keer zelf in, waarna de app met een refresh
+> token blijft werken. Praktisch gevolg: er is geen tenant ID, de authority is `consumers`, en als
+> het refresh token ooit ongeldig wordt (wachtwoordwijziging, ingetrokken toestemming, secret
+> verlopen) moet je één keer opnieuw inloggen. De app moet dat netjes melden in plaats van stil te
+> vallen.
