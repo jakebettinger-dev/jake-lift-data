@@ -10,6 +10,6 @@
     "sync": "node --no-warnings src/cli.js sync",
     "status": "node --no-warnings src/cli.js status",
     "zoek": "node --no-warnings src/cli.js zoek",
-    "test": "node --no-warnings --test test/"
+    "test": "node --no-warnings --test test/*.test.js"
   }
 }

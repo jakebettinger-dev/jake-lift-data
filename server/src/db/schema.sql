@@ -7,10 +7,11 @@ PRAGMA foreign_keys = ON;
 -- De twee ruimtes: werk en prive.
 CREATE TABLE IF NOT EXISTS ruimtes (
   id            INTEGER PRIMARY KEY,
-  naam          TEXT    NOT NULL UNIQUE,   -- 'werk' of 'prive'
-  pad           TEXT    NOT NULL,          -- pad in OneDrive, bv. Bestandskluis/Werk
-  delta_link    TEXT,                      -- waar de volgende sync verder gaat
-  laatste_sync  INTEGER                    -- unix-seconden
+  naam           TEXT    NOT NULL UNIQUE,  -- 'werk' of 'prive'
+  pad            TEXT    NOT NULL,         -- pad in OneDrive, bv. Bestandskluis/Werk
+  root_graph_id  TEXT,                     -- id van de hoofdmap bij Microsoft
+  delta_link     TEXT,                     -- waar de volgende sync verder gaat
+  laatste_sync   INTEGER                   -- unix-seconden
 );
 
 -- De index zelf. Eén regel per bestand of map.

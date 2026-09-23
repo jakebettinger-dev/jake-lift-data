@@ -1,0 +1,11 @@
+# Pas dit domein aan naar het (sub)domein dat naar je VPS wijst.
+kluis.jouwdomein.nl {
+	encode zstd gzip
+
+	# Grote uploads moeten er doorheen kunnen.
+	request_body {
+		max_size 100MB
+	}
+
+	reverse_proxy kluis:3000
+}

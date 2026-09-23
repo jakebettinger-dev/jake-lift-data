@@ -1,0 +1,32 @@
+services:
+  kluis:
+    build: ./server
+    container_name: bestandskluis
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    networks: [kluis]
+    # Alleen bereikbaar via Caddy, niet rechtstreeks vanaf internet.
+    expose: ["3000"]
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: bestandskluis-caddy
+    restart: unless-stopped
+    ports: ["8443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [kluis]
+    depends_on: [kluis]
+
+# Eigen netwerk, zodat Jake.Lift en de maintenance-app hier los van staan.
+networks:
+  kluis:
+    name: bestandskluis
+
+volumes:
+  caddy-data:
+  caddy-config:

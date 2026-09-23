@@ -4,8 +4,11 @@ const EINDE = "\x1b[0m";
 function schrijf(soort, bericht) {
   const kleur = process.stdout.isTTY ? (KLEUREN[soort] ?? "") : "";
   const einde = kleur ? EINDE : "";
-  const tijd = new Date().toISOString().slice(11, 19);
-  process.stdout.write(`${kleur}${tijd}  ${bericht}${einde}\n`);
+  // Alleen enkele regels krijgen een tijdstip; bij lege regels en blokken
+  // tekst is dat alleen maar rommelig.
+  const enkeleRegel = bericht && !bericht.includes("\n");
+  const tijd = enkeleRegel ? new Date().toISOString().slice(11, 19) + "  " : "";
+  process.stdout.write(`${kleur}${tijd}${bericht}${einde}\n`);
 }
 
 export const log = {
